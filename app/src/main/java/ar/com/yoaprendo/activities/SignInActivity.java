@@ -24,6 +24,7 @@ import ar.com.yoaprendo.Utils;
 import ar.com.yoaprendo.beans.Usuario;
 import ar.com.yoaprendo.exception.EmptyFieldException;
 import ar.com.yoaprendo.exception.PasswordMismatchException;
+import ar.com.yoaprendo.exception.SpaceCharacterException;
 import ar.com.yoaprendo.placepicker.TransparentProgressDialog;
 
 
@@ -75,6 +76,9 @@ public class SignInActivity extends AppCompatActivity {
         String usuario = txtUsuario.getText().toString();
         String clave = txtClave.getText().toString();
         String reclave = txtReclave.getText().toString();
+
+        if((usuario.contains(" ")|| clave.contains(" ") || reclave.contains(" ")))
+            throw new SpaceCharacterException();
 
         if((usuario.isEmpty() || clave.isEmpty() || reclave.isEmpty()))
             throw new EmptyFieldException();

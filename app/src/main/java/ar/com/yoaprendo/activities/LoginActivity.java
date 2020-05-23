@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import androidx.appcompat.app.AppCompatActivity;
+import ar.com.yoaprendo.MenuActivity;
 import ar.com.yoaprendo.R;
 import ar.com.yoaprendo.TipoUsuario;
 import ar.com.yoaprendo.Utils;
@@ -28,10 +29,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
         final Button button = (Button) findViewById(R.id.button3);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,9 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(usuarios.contains(id)) {
 
-                    //Intent intent = new Intent(LoginActivity.this,ChatActivity.class);
-                    Intent intent = new Intent(LoginActivity.this, PlacePickerActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(LoginActivity.this, MenuActivity.class));
 
                 }else{
 
