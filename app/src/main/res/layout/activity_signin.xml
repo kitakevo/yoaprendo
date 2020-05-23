@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="40dp"
+        android:text="Registrate"
+        android:textAlignment="center"
+        android:textColor="@android:color/background_light"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtUsuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="30dp"
+        android:hint="Ingrese Usuario"
+        android:inputType="textPersonName"
+        android:paddingHorizontal="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#ADFFFFFF" />
+
+    <EditText
+        android:id="@+id/txtClave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="30dp"
+        android:hint="Ingrese Clave"
+        android:inputType="textPassword"
+        android:paddingHorizontal="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#ADFFFFFF" />
+
+    <EditText
+        android:id="@+id/txtReclave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="30dp"
+        android:hint="Reingrese Clave"
+        android:inputType="textPassword"
+        android:paddingHorizontal="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#ADFFFFFF" />
+
+    <Button
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="20dp"
+        android:background="@drawable/button_bg"
+        android:text="Registrarse"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+</LinearLayout>
