@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#5416C3"
+    android:background="@drawable/activity_bg"
     android:orientation="vertical">
 
     <TextView
@@ -18,44 +18,44 @@
         android:textColor="@android:color/background_light"
         android:textSize="35sp" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher" />
+        android:orientation="vertical"
+        android:gravity="center|bottom">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/fotoPerfil"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:src="@mipmap/ic_launcher" />
 
     <Button
-        android:id="@+id/elegirImagen"
-        android:layout_width="match_parent"
+        android:id="@+id/btnSubirFoto"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="40dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_alumno"
         android:text="Subir foto"
+        android:paddingHorizontal="20dp"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:layout_marginHorizontal="100dp" />
+        android:textSize="20sp" />
+
+    </LinearLayout>
 
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:gravity="center|bottom"
+        android:layout_weight="1">
 
         <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_profesor"
-        android:layout_marginLeft="30dp"
-        android:text="Omitir"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/omitir"
+            android:id="@+id/profilepic_btnContinuar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_bg"
@@ -63,13 +63,9 @@
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:layout_marginRight="30dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"/>
-
+            android:paddingHorizontal="20dp"
+            android:layout_marginBottom="30dp"/>
 
     </LinearLayout>
-
-
 
 </LinearLayout>

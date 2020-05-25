@@ -46,15 +46,23 @@ public class Utils {
         return SphericalUtil.computeDistanceBetween(startLatLng, endLatLng);
     }
 
-    public static String hash(String text) throws NoSuchAlgorithmException {
+    public static String hash(String text) {
 
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        try{
 
-        md.update(text.getBytes(StandardCharsets.UTF_8));
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-        byte[] digest = md.digest();
+            md.update(text.getBytes(StandardCharsets.UTF_8));
 
-        return String.format("%064x", new BigInteger(1, digest));
+            byte[] digest = md.digest();
+
+            return String.format("%064x", new BigInteger(1, digest));
+
+        }catch(Exception e){
+
+            return text;
+
+        }
 
     }
 

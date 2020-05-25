@@ -30,10 +30,10 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/elegirActual"
+        android:id="@+id/btnElegirActual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="40dp"
+        android:layout_marginVertical="30dp"
         android:background="@drawable/button_bg"
         android:text="Elegir ubicación actual"
         android:textAllCaps="false"
@@ -42,7 +42,7 @@
         android:layout_marginHorizontal="80dp" />
 
     <Button
-        android:id="@+id/elegirMapa"
+        android:id="@+id/btnElegirMapa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/button_alumno"
@@ -61,7 +61,7 @@
         android:layout_weight="1">
 
         <Button
-        android:id="@+id/omitir"
+        android:id="@+id/ubicacion_btnOmitir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/button_profesor"

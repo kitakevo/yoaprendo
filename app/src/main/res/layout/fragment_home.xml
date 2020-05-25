@@ -7,13 +7,10 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMensajes"
+        android:id="@+id/rvContactos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-
-
-
     </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

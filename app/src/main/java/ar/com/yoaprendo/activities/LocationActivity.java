@@ -22,19 +22,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.UUID;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import ar.com.yoaprendo.R;
+import ar.com.yoaprendo.Utils;
 import ar.com.yoaprendo.beans.Ubicacion;
+import ar.com.yoaprendo.placepicker.TransparentProgressDialog;
 
 public class LocationActivity extends AppCompatActivity {
 
     private final static int LOCATION_REQUEST_CODE = 23;
+    private String uuid;
     FusedLocationProviderClient mFusedLocationClient;
+    TransparentProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +45,15 @@ public class LocationActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ubicacion);
 
+        uuid = getIntent().getStringExtra("UUID");
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        Button button1 = (Button) findViewById(R.id.elegirActual);
-        Button button2 = (Button) findViewById(R.id.elegirMapa);
+        Button btnElegirActual = (Button) findViewById(R.id.btnElegirActual);
+        Button btnElegirMapa = (Button) findViewById(R.id.btnElegirMapa);
+        Button btnOmitir = (Button) findViewById(R.id.ubicacion_btnOmitir);
 
-        button1.setOnClickListener(new View.OnClickListener() {
+        btnElegirActual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -67,10 +72,17 @@ public class LocationActivity extends AppCompatActivity {
             }
         });
 
-        button2.setOnClickListener(new View.OnClickListener() {
+        btnElegirMapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LocationActivity.this,PlacePickerActivity.class));
+                startActivity(new Intent(LocationActivity.this,PlacePickerActivity.class).putExtra("UUID",uuid));
+            }
+        });
+
+        btnOmitir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LocationActivity.this, MenuActivity.class).putExtra("UUID",uuid));
             }
         });
 
@@ -105,13 +117,9 @@ public class LocationActivity extends AppCompatActivity {
 
     public void seleccionarUbicacionActual(){
 
-        if(!isLocationEnabled()){Toast.makeText(LocationActivity.this,"Asegúrese de activar la geolocalización", Toast.LENGTH_SHORT).show();return;};
-
-
+        if(!isLocationEnabled()){Toast.makeText(LocationActivity.this,"Asegúrese de activar la geolocalización", Toast.LENGTH_SHORT).show();return;}
 
         getLastLocation();
-
-
 
     }
 
@@ -128,9 +136,9 @@ public class LocationActivity extends AppCompatActivity {
                                 } else {
 
                                     FirebaseDatabase db = FirebaseDatabase.getInstance();
+                                    db.getReference().child("users").child(uuid).child("ubicacion").setValue(new Ubicacion(location.getLatitude(),location.getLongitude()));
 
-                                    db.getReference().child("Ubicaciones").child(UUID.randomUUID().toString()).setValue(new Ubicacion(location.getLatitude(),location.getLongitude()));
-
+                                    startActivity(new Intent(LocationActivity.this, MenuActivity.class).putExtra("UUID",uuid));
                                 }
 
                             }
@@ -156,14 +164,20 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     private LocationCallback mLocationCallback = new LocationCallback() {
+
         @Override
         public void onLocationResult(LocationResult locationResult) {
+
             Location mLastLocation = locationResult.getLastLocation();
 
             FirebaseDatabase db = FirebaseDatabase.getInstance();
 
-            db.getReference().child("Ubicaciones").child(UUID.randomUUID().toString()).setValue(new Ubicacion(mLastLocation.getLatitude(),mLastLocation.getLongitude()));
+            db.getReference().child("users").child(uuid).child("ubicacion").setValue(new Ubicacion(mLastLocation.getLatitude(),mLastLocation.getLongitude()));
+
+            startActivity(new Intent(LocationActivity.this, MenuActivity.class).putExtra("UUID",uuid));
+
         }
+
     };
 
 }

@@ -13,18 +13,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import androidx.appcompat.app.AppCompatActivity;
-import ar.com.yoaprendo.MenuActivity;
 import ar.com.yoaprendo.R;
-import ar.com.yoaprendo.TipoUsuario;
 import ar.com.yoaprendo.Utils;
-import ar.com.yoaprendo.beans.Usuario;
+import ar.com.yoaprendo.placepicker.TransparentProgressDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
+    Button button;
     private FirebaseDatabase db;
 
     @Override
@@ -34,12 +31,14 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        final Button button = (Button) findViewById(R.id.button3);
+        final Button button = (Button) findViewById(R.id.btnLogin);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 button.setClickable(false);
+
                 try{
 
                 login();
@@ -47,10 +46,6 @@ public class LoginActivity extends AppCompatActivity {
                 }catch (Exception e){
 
                 Utils.popup(e.getMessage(),LoginActivity.this);
-
-                }finally{
-
-                    button.setClickable(true);
 
                 }
 
@@ -63,37 +58,32 @@ public class LoginActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance();
 
-        TextView txtNombre = (TextView) findViewById(R.id.editText);
-        TextView txtClave = (TextView) findViewById(R.id.editText2);
+        TextView txtUsuario = (TextView) findViewById(R.id.txtUsuario);
+        TextView txtClave = (TextView) findViewById(R.id.txtClave);
 
-        final String id = txtNombre.getText().toString() + txtClave.getText().toString();
-
-        final List<String> usuarios = new ArrayList<>();
+        final String id = Utils.hash(txtUsuario.getText().toString() + txtClave.getText().toString());
 
         db.getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Map<String, Usuario> td = (Map<String, Usuario>) dataSnapshot.getValue();
-
-                System.out.println(td);
-
-                //List<String> l = new ArrayList<String>(td.keySet());
+                List<String> listId = new ArrayList<>();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    usuarios.add(postSnapshot.getValue(Usuario.class).usuario+postSnapshot.getValue(Usuario.class).clave);
+
+                    listId.add(postSnapshot.getKey());
+
                 }
 
-                System.out.println(usuarios);
-                System.out.println(id);
+                if(listId.contains(id)) {
 
-                if(usuarios.contains(id)) {
-
-                    startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+                    startActivity(new Intent(LoginActivity.this, MenuActivity.class).putExtra("ID",id));
 
                 }else{
 
-                    Utils.popup("Login Incorrecto",LoginActivity.this);
+                    Utils.popup("Clave o usuario incorrecto",LoginActivity.this);
+
+                    button.setClickable(true);
 
                 }
 
@@ -101,7 +91,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
                 Utils.popup("Error en base de datos, intente nuevamente",LoginActivity.this);
+
+                button.setClickable(true);
+
             }
 
         });

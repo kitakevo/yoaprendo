@@ -3,6 +3,7 @@ package ar.com.yoaprendo.chat;
 import java.util.Map;
 
 public class MensajeEnviar extends Mensaje {
+
     private Map hora;
 
     public MensajeEnviar() {

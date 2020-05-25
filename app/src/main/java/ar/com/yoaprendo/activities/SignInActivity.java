@@ -15,9 +15,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import androidx.appcompat.app.AppCompatActivity;
+import ar.com.yoaprendo.LoadingDialog;
 import ar.com.yoaprendo.R;
 import ar.com.yoaprendo.TipoUsuario;
 import ar.com.yoaprendo.Utils;
@@ -25,30 +25,27 @@ import ar.com.yoaprendo.beans.Usuario;
 import ar.com.yoaprendo.exception.EmptyFieldException;
 import ar.com.yoaprendo.exception.PasswordMismatchException;
 import ar.com.yoaprendo.exception.SpaceCharacterException;
-import ar.com.yoaprendo.placepicker.TransparentProgressDialog;
-
 
 public class SignInActivity extends AppCompatActivity {
 
-    TransparentProgressDialog mProgressDialog;
-    Button button;
+    private Button button;
     private FirebaseDatabase db;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_signin);
 
-        button = (Button) findViewById(R.id.btnSignIn);
+        button = findViewById(R.id.btnSignIn);
+
+        loadingDialog = new LoadingDialog(this);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                button.setClickable(false);
-
-                mProgressDialog = new TransparentProgressDialog(SignInActivity.this);
-
-                Utils.loadScreen(mProgressDialog);
 
                  try{
 
@@ -86,13 +83,17 @@ public class SignInActivity extends AppCompatActivity {
         if(!clave.equals(reclave))
             throw new PasswordMismatchException();
 
-        Usuario user = new Usuario(txtUsuario.getText().toString(),txtClave.getText().toString(), TipoUsuario.ALUMNO);
+        Usuario user = new Usuario(txtUsuario.getText().toString(),txtClave.getText().toString(), TipoUsuario.valueOf(getIntent().getStringExtra("TIPO_USUARIO")));
 
         traerUsuarios(user);
 
     }
 
     public void traerUsuarios(final Usuario usuario){
+
+        button.setClickable(false);
+
+        loadingDialog.startLoadingDialog();
 
         final List<String> usuarios = new ArrayList<>();
 
@@ -102,21 +103,19 @@ public class SignInActivity extends AppCompatActivity {
 
                 Map<String, Usuario> td = (Map<String, Usuario>) dataSnapshot.getValue();
 
-                System.out.println(td);
-
-                //List<String> l = new ArrayList<String>(td.keySet());
-
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    usuarios.add(postSnapshot.getValue(Usuario.class).usuario);
+                    usuarios.add(postSnapshot.getValue(Usuario.class).getUsuario());
                 }
 
-                if(!usuarios.contains(usuario.usuario)) {
+                if(!usuarios.contains(usuario.getUsuario())) {
 
-                    db.getReference().child("users").child(UUID.randomUUID().toString()).setValue(usuario);
+                    String uuid = Utils.hash(usuario.getUsuario() + usuario.getClave());
 
-                    //Utils.popup("Usuario Creado",SignInActivity.this);
+                    usuario.setClave("");
 
-                    startActivity(new Intent(SignInActivity.this,LocationActivity.class));
+                    db.getReference().child("users").child(uuid).setValue(usuario);
+
+                    startActivity(new Intent(SignInActivity.this,NameActivity.class).putExtra("UUID",uuid));
 
                 }else{
 
@@ -124,17 +123,22 @@ public class SignInActivity extends AppCompatActivity {
 
                 }
 
-                Utils.disableLoadScreen(mProgressDialog);
-
                 button.setClickable(true);
+
+                loadingDialog.dismissDialog();
+
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
                 Utils.popup("Error en base de datos, intente nuevamente",SignInActivity.this);
-                Utils.disableLoadScreen(mProgressDialog);
+
                 button.setClickable(true);
+
+                loadingDialog.dismissDialog();
+
             }
 
         });

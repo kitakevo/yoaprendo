@@ -2,7 +2,6 @@ package ar.com.yoaprendo.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -13,11 +12,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -46,17 +41,21 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
     public static MutableLiveData<Boolean> ubicacionAceptada;
     public static double latitud;
     public static double longitud;
+    private String uuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_place_picker);
+
+        uuid = getIntent().getStringExtra("UUID");
 
         Button botonAceptar = (Button) findViewById(R.id.Select);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
 
         /*if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION )
@@ -74,8 +73,8 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
             public void onChanged(Boolean changedValue) {
                 if (changedValue) {
                     FirebaseDatabase db = FirebaseDatabase.getInstance();
-                    db.getReference().child("Ubicaciones").child(UUID.randomUUID().toString()).setValue(new Ubicacion(latitud, longitud));
-                    startChat();
+                    db.getReference().child("users").child(uuid).child("ubicacion").setValue(new Ubicacion(latitud, longitud));
+                    startApp();
                 }
             }
         });
@@ -122,7 +121,7 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
 
                 } else {
 
-                    startChat();
+                    startApp();
 
                 }
 
@@ -134,13 +133,15 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
 
     }
 
-    public void startChat() {
+    public void startApp() {
 
-        startActivity(new Intent(PlacePickerActivity.this, ChatActivity.class));
+        startActivity(new Intent(PlacePickerActivity.this, MenuActivity.class).putExtra("UUID",uuid));
+
 
     }
 
@@ -176,11 +177,14 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
             dialogFragment.show(ft, "dialog");
 
             return address;
+
         } catch (IOException e) {
+
             e.printStackTrace();
             return "No Address Found";
 
         }
 
     }
+
 }
