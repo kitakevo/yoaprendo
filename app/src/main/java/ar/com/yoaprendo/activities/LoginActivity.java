@@ -14,15 +14,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import ar.com.yoaprendo.LoadingDialog;
 import ar.com.yoaprendo.R;
 import ar.com.yoaprendo.Utils;
 import ar.com.yoaprendo.placepicker.TransparentProgressDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button button;
+    private Button button;
     private FirebaseDatabase db;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +34,15 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        final Button button = (Button) findViewById(R.id.btnLogin);
+        button = (Button) findViewById(R.id.btnLogin);
+
+        loadingDialog = new LoadingDialog(this);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                button.setClickable(false);
-
-                try{
-
-                login();
-
-                }catch (Exception e){
+                try{ login(); }catch (Exception e){
 
                 Utils.popup(e.getMessage(),LoginActivity.this);
 
@@ -56,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(){
 
+        button.setClickable(false);
+
+        loadingDialog.startLoadingDialog();
+
         db = FirebaseDatabase.getInstance();
 
         TextView txtUsuario = (TextView) findViewById(R.id.txtUsuario);
@@ -64,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         final String id = Utils.hash(txtUsuario.getText().toString() + txtClave.getText().toString());
 
         db.getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -75,15 +79,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
 
-                if(listId.contains(id)) {
+                loadingDialog.dismissDialog();
 
-                    startActivity(new Intent(LoginActivity.this, MenuActivity.class).putExtra("ID",id));
+                button.setClickable(true);
 
-                }else{
+                if (listId.contains(id)) {
 
-                    Utils.popup("Clave o usuario incorrecto",LoginActivity.this);
+                    startActivity(new Intent(LoginActivity.this, MenuActivity.class).putExtra("UUID", id));
 
-                    button.setClickable(true);
+                } else {
+
+                    Utils.popup("Clave o usuario incorrecto", LoginActivity.this);
 
                 }
 
@@ -93,6 +99,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
                 Utils.popup("Error en base de datos, intente nuevamente",LoginActivity.this);
+
+                loadingDialog.dismissDialog();
 
                 button.setClickable(true);
 

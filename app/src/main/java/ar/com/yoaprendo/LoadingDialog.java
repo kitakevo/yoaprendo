@@ -1,6 +1,7 @@
 package ar.com.yoaprendo;
 
 import android.app.Activity;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +22,7 @@ public class LoadingDialog {
         builder.setView(layoutInflater.inflate(R.layout.loadingdialog,null));
         builder.setCancelable(false);
         alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         alertDialog.show();
 
     }

@@ -25,6 +25,7 @@ import com.google.firebase.storage.UploadTask;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import ar.com.yoaprendo.LoadingDialog;
 import ar.com.yoaprendo.R;
 import ar.com.yoaprendo.Utils;
 import ar.com.yoaprendo.chat.MensajeEnviar;
@@ -33,6 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfilePhotoActivity extends AppCompatActivity {
 
+    private LoadingDialog loadingDialog;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
@@ -53,6 +55,8 @@ public class ProfilePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profilepic);
 
         imagen = (CircleImageView) findViewById(R.id.fotoPerfil);
+
+        loadingDialog = new LoadingDialog(this);
 
         btnContinuar = (Button) findViewById(R.id.profilepic_btnContinuar);
         btnSubirFoto = (Button) findViewById(R.id.btnSubirFoto);
@@ -99,9 +103,13 @@ public class ProfilePhotoActivity extends AppCompatActivity {
 
             UploadTask uploadTask = fotoReferencia.putFile(u);
 
+            loadingDialog.startLoadingDialog();
+
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+
+                    loadingDialog.dismissDialog();
 
                     Toast.makeText(ProfilePhotoActivity.this, "No se pudo subir la imagen, intente mas tarde.", Toast.LENGTH_SHORT).show();
 
@@ -117,6 +125,10 @@ public class ProfilePhotoActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
 
                             databaseReference.child("users").child(uuid).child("fotoPerfil").setValue(uri.toString());
+
+                            loadingDialog.dismissDialog();
+
+                            Toast.makeText(ProfilePhotoActivity.this, "Imagen subida", Toast.LENGTH_SHORT).show();
 
                         }
                     });

@@ -71,7 +71,7 @@ public class MenuActivity extends AppCompatActivity{
                 .setDrawerLayout(drawer)
                 .build();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
@@ -87,8 +87,14 @@ public class MenuActivity extends AppCompatActivity{
                 CircleImageView fotoPerfil = (CircleImageView) findViewById (R.id.fotoPerfilHeader);
                 TextView nombreUsuario = (TextView) findViewById(R.id.txtNombreUsuario);
 
+                if(usuario.getNombre().equals("preder")){
+                    nombreUsuario.setText(usuario.getUsuario());
+                }else{
+                    nombreUsuario.setText(usuario.getNombre());
+                }
+
+                if(!usuario.getFotoPerfil().equals("preder"))
                 Glide.with(MenuActivity.this).load(usuario.getFotoPerfil()).into(fotoPerfil);
-                nombreUsuario.setText(usuario.getNombre());
 
             }
 

@@ -29,8 +29,8 @@ public class Usuario {
         this.clave = clave;
         this.tipoUsuario = tipoUsuario;
         this.ubicacion = new Ubicacion(0,0);
-        this.nombre = "Pepe Grillo";
-        this.fotoPerfil = null;
+        this.nombre = "preder";
+        this.fotoPerfil = "preder";
         this.chatIdList = new ArrayList<>();
 
     }

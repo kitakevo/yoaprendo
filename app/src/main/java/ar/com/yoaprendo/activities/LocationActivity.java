@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import ar.com.yoaprendo.LoadingDialog;
 import ar.com.yoaprendo.R;
 import ar.com.yoaprendo.Utils;
 import ar.com.yoaprendo.beans.Ubicacion;
@@ -36,7 +37,7 @@ public class LocationActivity extends AppCompatActivity {
     private final static int LOCATION_REQUEST_CODE = 23;
     private String uuid;
     FusedLocationProviderClient mFusedLocationClient;
-    TransparentProgressDialog mProgressDialog;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class LocationActivity extends AppCompatActivity {
         uuid = getIntent().getStringExtra("UUID");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        loadingDialog = new LoadingDialog(this);
 
         Button btnElegirActual = (Button) findViewById(R.id.btnElegirActual);
         Button btnElegirMapa = (Button) findViewById(R.id.btnElegirMapa);
@@ -126,19 +129,27 @@ public class LocationActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     private void getLastLocation(){
 
+        loadingDialog.startLoadingDialog();
+
                 mFusedLocationClient.getLastLocation().addOnCompleteListener(
                         new OnCompleteListener<Location>() {
                             @Override
                             public void onComplete(@NonNull Task<Location> task) {
+
                                 Location location = task.getResult();
+
                                 if (location == null) {
+
                                     requestNewLocationData();
+
                                 } else {
+
+                                    loadingDialog.dismissDialog();
 
                                     FirebaseDatabase db = FirebaseDatabase.getInstance();
                                     db.getReference().child("users").child(uuid).child("ubicacion").setValue(new Ubicacion(location.getLatitude(),location.getLongitude()));
-
                                     startActivity(new Intent(LocationActivity.this, MenuActivity.class).putExtra("UUID",uuid));
+
                                 }
 
                             }
@@ -169,6 +180,8 @@ public class LocationActivity extends AppCompatActivity {
         public void onLocationResult(LocationResult locationResult) {
 
             Location mLastLocation = locationResult.getLastLocation();
+
+            loadingDialog.dismissDialog();
 
             FirebaseDatabase db = FirebaseDatabase.getInstance();
 
